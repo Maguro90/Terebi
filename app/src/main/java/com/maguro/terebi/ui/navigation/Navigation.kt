@@ -16,7 +16,20 @@ fun Navigation() {
             route = Route.Schedule.route,
             arguments = Route.Schedule.arguments
         ) {
-            ScheduleScreen()
+            ScheduleScreen(
+                onScheduleItemClick = {
+                    navController.navigate(
+                        Route.ShowDetails.routeWithArgs(it.show.id, it.episode.id)
+                    )
+                }
+            )
+        }
+
+        composable(
+            route = Route.ShowDetails.route,
+            arguments = Route.ShowDetails.arguments
+        ) {
+
         }
 
     }

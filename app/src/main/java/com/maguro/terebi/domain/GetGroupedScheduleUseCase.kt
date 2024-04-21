@@ -20,7 +20,7 @@ interface GetGroupedScheduleUseCase {
 
 class GetGroupedScheduleUseCaseImpl(
     private val scheduleRepository: ScheduleRepository,
-    private val coroutineDispatcher: CoroutineDispatcher
+    private val defaultDispatcher: CoroutineDispatcher
 ) : GetGroupedScheduleUseCase {
 
     override suspend fun invoke(
@@ -29,7 +29,7 @@ class GetGroupedScheduleUseCaseImpl(
     ): RequestResponse<Map<Channel, List<ScheduleItem>>> {
         return scheduleRepository.getSchedule(date, countryCode)
             .map {
-                withContext(coroutineDispatcher) {
+                withContext(defaultDispatcher) {
                     it.sortedBy { it.airingDateTime }
                     .groupBy { it.channel }
                 }

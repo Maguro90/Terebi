@@ -7,5 +7,6 @@ data class Show(
     val name: String,
     val image: URL?,
     val genres: List<String>? = null,
-    val rating: Int? = null
+    val rating: Int? = null,
+    val summary: String? = null
 )

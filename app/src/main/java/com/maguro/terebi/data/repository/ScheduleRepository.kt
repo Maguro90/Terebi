@@ -18,14 +18,14 @@ interface ScheduleRepository {
 
 class ScheduleRepositoryImpl(
     private val scheduleApi: ScheduleApi,
-    private val coroutineDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher
 ) : ScheduleRepository {
 
     override suspend fun getSchedule(
         date: LocalDate,
         countryCode: String
     ): RequestResponse<List<ScheduleItem>> {
-        return withContext(coroutineDispatcher) {
+        return withContext(ioDispatcher) {
             scheduleApi.getSchedule(
                 date = date,
                 countryCode = countryCode

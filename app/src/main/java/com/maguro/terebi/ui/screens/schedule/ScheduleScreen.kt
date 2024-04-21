@@ -1,6 +1,7 @@
 package com.maguro.terebi.ui.screens.schedule
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,15 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,22 +32,25 @@ import coil.compose.AsyncImage
 import com.maguro.terebi.R
 import com.maguro.terebi.data.model.Channel
 import com.maguro.terebi.data.model.ScheduleItem
+import com.maguro.terebi.ui.components.LoadingScreen
 import com.maguro.terebi.ui.screens.LocalSystemTimeFormat
 import com.maguro.terebi.ui.screens.LocalSystemTimeOffset
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ScheduleScreen(
+    onScheduleItemClick: (ScheduleItem) -> Unit,
     viewModel: ScheduleViewModel = koinViewModel()
 ) {
-    
+
     when (val schedule = viewModel.schedule.collectAsState().value) {
         is ScheduleViewModel.State.Idle, ScheduleViewModel.State.Loading -> {
-            LoadingList()
+            LoadingScreen()
         }
         is ScheduleViewModel.State.Success -> {
             ScheduleList(
-                schedule = schedule.data
+                schedule = schedule.data,
+                onScheduleItemClick = onScheduleItemClick
             )
         }
         is ScheduleViewModel.State.Error -> {
@@ -60,28 +61,11 @@ fun ScheduleScreen(
 
 }
 
-@Composable
-private fun LoadingList() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier.wrapContentSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(48.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "Loading...")
-        }
-    }
-}
 
 @Composable
 private fun ScheduleList(
     schedule: Map<Channel, List<ScheduleItem>>,
+    onScheduleItemClick: (ScheduleItem) -> Unit
 ) {
     val channels = schedule.keys.toList()
 
@@ -96,7 +80,8 @@ private fun ScheduleList(
             ) {index, item ->
                 ChannelSchedule(
                     channel = item,
-                    schedule = schedule.getOrDefault(item, emptyList())
+                    schedule = schedule.getOrDefault(item, emptyList()),
+                    onScheduleItemClick = onScheduleItemClick
                 )
                 if (index != channels.lastIndex) {
                     Spacer(modifier = Modifier.height(16.dp))
@@ -109,7 +94,8 @@ private fun ScheduleList(
 @Composable
 private fun ChannelSchedule(
     channel: Channel,
-    schedule: List<ScheduleItem> 
+    schedule: List<ScheduleItem>,
+    onScheduleItemClick: (ScheduleItem) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -133,7 +119,8 @@ private fun ChannelSchedule(
                 key = { _, item -> item.lazyItemKey }
             ) {index, item ->
                 ChannelScheduleItem(
-                    item = item
+                    item = item,
+                    onClick = onScheduleItemClick
                 )
                 if (index != schedule.lastIndex) {
                     Spacer(modifier = Modifier.width(8.dp))
@@ -146,13 +133,15 @@ private fun ChannelSchedule(
 
 @Composable
 private fun ChannelScheduleItem(
-    item: ScheduleItem
+    item: ScheduleItem,
+    onClick: (ScheduleItem) -> Unit
 ) {
     
     Column(
         modifier = Modifier
             .fillMaxHeight()
-            .width(160.dp),
+            .width(160.dp)
+            .clickable { onClick(item) },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AsyncImage(
@@ -188,4 +177,4 @@ private fun ChannelScheduleItem(
 }
 
 private val ScheduleItem.lazyItemKey: String
-    get() = "${channel.id}_${show.id}_${episode?.id}_${airingDateTime}"
+    get() = "${channel.id}_${show.id}_${episode.id}_${airingDateTime}"

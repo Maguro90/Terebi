@@ -14,12 +14,12 @@ data class ScheduleItemResponse(
     val show: ShowResponse,
 ) {
 
-    private fun getEpisodeModel(): Episode? {
+    private fun getEpisodeModel(): Episode {
         return Episode(
             id = LongId(id),
             name = name,
-            season = season ?: return null,
-            number = number ?: return null
+            season = season,
+            number = number
         )
     }
 

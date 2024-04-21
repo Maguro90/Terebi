@@ -1,4 +1,4 @@
-package com.maguro.terebi.di
+package com.maguro.terebi.di.remote
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -27,7 +27,7 @@ val retrofitModule = module {
 
     single<Retrofit> {
         Retrofit.Builder()
-            .baseUrl("https://api.tvmaze.com")
+            .baseUrl(get<String>(ApiRootUrl))
             .client(get())
             .addConverterFactory(get())
             .build()
