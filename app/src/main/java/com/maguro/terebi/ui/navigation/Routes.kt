@@ -36,4 +36,9 @@ interface Route {
         }
     }
 
+    object Search : Route {
+        override val route: String = "search"
+        override val arguments: List<NamedNavArgument> = emptyList()
+    }
+
 }

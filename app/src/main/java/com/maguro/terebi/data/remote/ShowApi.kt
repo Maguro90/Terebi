@@ -8,4 +8,6 @@ interface ShowApi {
 
     suspend fun getShowDetails(showId: Id): RequestResponse<Show>
 
+    suspend fun searchShows(query: String): RequestResponse<List<Show>>
+
 }

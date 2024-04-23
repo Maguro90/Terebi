@@ -19,4 +19,14 @@ class TVMazeShowApi(
         }
     }
 
+    override suspend fun searchShows(query: String): RequestResponse<List<Show>> {
+        return wrapResponse {
+            showApi.searchShows(
+                query = query
+            ).map {
+                it.show.getShowModel()
+            }
+        }
+    }
+
 }

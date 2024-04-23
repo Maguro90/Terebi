@@ -62,6 +62,7 @@ import java.time.format.FormatStyle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleScreen(
+    onSearchClick: () -> Unit,
     onScheduleItemClick: (ScheduleItem) -> Unit,
     viewModel: ScheduleViewModel = koinViewModel()
 ) {
@@ -77,7 +78,7 @@ fun ScheduleScreen(
                 )
             },
             actions = {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = onSearchClick) {
                     Icon(
                         imageVector = Icons.Rounded.Search,
                         contentDescription = null

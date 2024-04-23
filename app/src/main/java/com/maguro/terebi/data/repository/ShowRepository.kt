@@ -11,6 +11,8 @@ interface ShowRepository {
 
     suspend fun getShowDetails(showId: Id): RequestResponse<Show>
 
+    suspend fun searchShows(query: String): RequestResponse<List<Show>>
+
 }
 
 class ShowRepositoryImpl(
@@ -21,6 +23,12 @@ class ShowRepositoryImpl(
     override suspend fun getShowDetails(showId: Id): RequestResponse<Show> {
         return withContext(ioDispatcher) {
             showApi.getShowDetails(showId)
+        }
+    }
+
+    override suspend fun searchShows(query: String): RequestResponse<List<Show>> {
+        return withContext(ioDispatcher) {
+            showApi.searchShows(query)
         }
     }
 
