@@ -6,6 +6,7 @@ import com.maguro.terebi.data.RequestResponse
 import com.maguro.terebi.data.model.Channel
 import com.maguro.terebi.data.model.ScheduleItem
 import com.maguro.terebi.domain.GetGroupedScheduleUseCase
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -17,6 +18,9 @@ class ScheduleViewModel(
 ) : ViewModel() {
 
     private val _schedule = MutableStateFlow<State>(State.Idle)
+    private var loadingJob: Job? = null
+    var date: LocalDate = LocalDate.now()
+        private set
 
     val schedule: StateFlow<State>
         get() = _schedule
@@ -25,16 +29,24 @@ class ScheduleViewModel(
         reloadSchedule()
     }
 
+    fun setDate(date: LocalDate) {
+        if (loadingJob?.isActive == true) {
+            loadingJob?.cancel()
+        }
+        this.date = date
+        reloadSchedule()
+    }
+
     fun reloadSchedule() {
 
         if (_schedule.value == State.Loading)
             return
 
-        viewModelScope.launch {
+        loadingJob = viewModelScope.launch {
             _schedule.value = State.Loading
 
             val result = getGroupedScheduleUseCase(
-                date = LocalDate.now(),
+                date = date,
                 countryCode = Locale.US.country
             )
 
