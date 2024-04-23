@@ -3,22 +3,28 @@ package com.maguro.terebi.ui.screens
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.maguro.terebi.R
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maguro.terebi.ui.navigation.Navigation
+import kotlinx.coroutines.flow.MutableStateFlow
 
-@OptIn(ExperimentalMaterial3Api::class)
+private val topAppBar = MutableStateFlow<(@Composable () -> Unit)?>(null)
+
+@Composable
+fun SetTopAppBar(key: Any? = null, block: (@Composable () -> Unit)?) {
+    LaunchedEffect(key) {
+        topAppBar.value = block
+    }
+}
+
 @Composable
 fun TerebiScaffold() {
     Scaffold(
         topBar = {
-             TopAppBar(title = { Text(text = stringResource(id = R.string.app_name)) })
+            topAppBar.collectAsStateWithLifecycle().value?.invoke()
         },
         content = {
             Box(modifier = Modifier

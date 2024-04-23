@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Terebi</string>
+
+    <string name="screen_title_schedule">Schedule</string>
+    <string name="screen_title_details">Details</string>
+
+    <string name="loading">Loading</string>
+    <string name="rating">%1$d/5</string>
+    <string name="no_genres_available">No genres available</string>
+    <string name="no_rating_available">No rating available</string>
+    <string name="no_summary_available">No summary available</string>
+    <string name="show_summary">Show summary</string>
+    <string name="episode_summary">Episode summary</string>
 </resources>

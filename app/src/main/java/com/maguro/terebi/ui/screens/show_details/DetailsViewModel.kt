@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maguro.terebi.data.IdDeserializer
 import com.maguro.terebi.data.RequestResponse
-import com.maguro.terebi.domain.GetShowWithEpisodeUseCase
-import com.maguro.terebi.domain.ShowWithEpisode
+import com.maguro.terebi.data.model.ScheduleItem
+import com.maguro.terebi.domain.GetScheduleItemDetailsUseCase
 import com.maguro.terebi.ui.navigation.Route
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,24 +15,19 @@ import kotlinx.coroutines.launch
 class DetailsViewModel(
     stateHandle: SavedStateHandle,
     idDeserializer: IdDeserializer,
-    private val getShowWithEpisodeUseCase: GetShowWithEpisodeUseCase
+    private val getScheduleItemDetailsUseCase: GetScheduleItemDetailsUseCase
 ) : ViewModel() {
 
-    private val showId =
+    private val scheduleItemId =
         stateHandle
-            .get<String>(Route.ShowDetails.Args.ShowId.pathName)
+            .get<String>(Route.ShowDetails.Args.ScheduleItemId.pathName)
             ?.let { idDeserializer(it) }
-            ?: throw IllegalArgumentException("showId argument is expected")
-
-    private val episodeId =
-        stateHandle
-            .get<String>(Route.ShowDetails.Args.EpisodeId.pathName)
-            ?.let { idDeserializer(it) }
-            ?: throw IllegalArgumentException("episodeId argument is expected")
+            ?: throw IllegalArgumentException("scheduleItemId argument is expected")
 
     private val _details = MutableStateFlow<State>(State.Idle)
 
-    val details: StateFlow<State> = _details
+    val details: StateFlow<State>
+        get() = _details
 
     init {
         reloadDetails()
@@ -44,9 +39,8 @@ class DetailsViewModel(
 
             _details.value = State.Loading
 
-            val response = getShowWithEpisodeUseCase(
-                showId = showId,
-                episodeId = episodeId
+            val response = getScheduleItemDetailsUseCase(
+                scheduleItemId = scheduleItemId
             )
 
             _details.value = when (response) {
@@ -64,7 +58,7 @@ class DetailsViewModel(
     sealed interface State {
         object Idle: State
         object Loading: State
-        data class Success(val data: ShowWithEpisode): State
+        data class Success(val data: ScheduleItem?): State
         data class Error(val error: RequestResponse.Error): State
     }
 

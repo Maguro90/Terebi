@@ -25,6 +25,7 @@ data class ScheduleItemResponse(
 
     fun getScheduleItemModel(): ScheduleItem {
         return ScheduleItem(
+            id = LongId(id),
             show = show.getShowModel(),
             episode = getEpisodeModel(),
             channel = show.getChannelModel(),

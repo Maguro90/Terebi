@@ -3,6 +3,7 @@ package com.maguro.terebi.data.remote.impl.tvmaze.responses
 import com.maguro.terebi.data.model.Channel
 import com.maguro.terebi.data.model.LongId
 import com.maguro.terebi.data.model.Show
+import com.squareup.moshi.Json
 import java.net.URL
 
 data class ShowResponse(
@@ -11,8 +12,11 @@ data class ShowResponse(
     val image: ImageResponse? = null,
     val genres: List<String>? = null,
     val rating: RatingResponse,
+    val summary: String? = null,
     val network: NetworkResponse? = null,
-    val webChannel: WebChannelResponse? = null
+    val webChannel: WebChannelResponse? = null,
+    @Json(name = "_links")
+    val links: ShowLinks
 ) {
 
     private fun getImage(): URL? {
@@ -30,9 +34,18 @@ data class ShowResponse(
             id = LongId(id),
             name = name,
             image = getImage(),
-            genres = genres,
-            rating = rating.getRatingModel()
+            genres = genres?.takeIf { it.isNotEmpty() },
+            rating = rating.getRatingModel(),
+            summary = summary
         )
     }
 
 }
+
+data class ShowLinks(
+    val self: LinkResponse,
+    @Json(name = "previousepisode")
+    val previousEpisode: LinkResponse,
+    @Json(name = "nextepisode")
+    val nextEpisode: LinkResponse,
+)

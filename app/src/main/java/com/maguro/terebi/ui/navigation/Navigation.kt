@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.maguro.terebi.ui.screens.schedule.ScheduleScreen
+import com.maguro.terebi.ui.screens.show_details.DetailsScreen
 
 @Composable
 fun Navigation() {
@@ -19,7 +20,7 @@ fun Navigation() {
             ScheduleScreen(
                 onScheduleItemClick = {
                     navController.navigate(
-                        Route.ShowDetails.routeWithArgs(it.show.id, it.episode.id)
+                        Route.ShowDetails.routeWithArgs(it.id)
                     )
                 }
             )
@@ -29,7 +30,7 @@ fun Navigation() {
             route = Route.ShowDetails.route,
             arguments = Route.ShowDetails.arguments
         ) {
-
+            DetailsScreen(onBackClick = { navController.popBackStack() })
         }
 
     }

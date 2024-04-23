@@ -18,25 +18,21 @@ interface Route {
     object ShowDetails : Route {
 
         enum class Args(val pathName: String) {
-            ShowId("showId"),
-            EpisodeId("episodeId")
+            ScheduleItemId("scheduleItemId")
         }
 
         override val route =
-            "show_details/{${Args.ShowId.pathName}}/episode/{${Args.EpisodeId.pathName}}"
+            "show_details/{${Args.ScheduleItemId.pathName}}"
 
         override val arguments = listOf(
-            navArgument(Args.ShowId.name) { NavType.StringType },
-            navArgument(Args.EpisodeId.name) { NavType.StringType }
+            navArgument(Args.ScheduleItemId.pathName) { NavType.StringType },
         )
 
         fun routeWithArgs(
-            showId: Id,
-            episodeId: Id
+            scheduleItemId: Id,
         ): String {
             return route
-                .replace("{${Args.ShowId.pathName}}", showId.toString())
-                .replace("{${Args.EpisodeId.pathName}}", episodeId.toString())
+                .replace("{${Args.ScheduleItemId.pathName}}", scheduleItemId.toString())
         }
     }
 

@@ -17,17 +17,24 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.maguro.terebi.R
 import com.maguro.terebi.data.model.Channel
@@ -35,15 +42,31 @@ import com.maguro.terebi.data.model.ScheduleItem
 import com.maguro.terebi.ui.components.LoadingScreen
 import com.maguro.terebi.ui.screens.LocalSystemTimeFormat
 import com.maguro.terebi.ui.screens.LocalSystemTimeOffset
+import com.maguro.terebi.ui.screens.SetTopAppBar
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleScreen(
     onScheduleItemClick: (ScheduleItem) -> Unit,
     viewModel: ScheduleViewModel = koinViewModel()
 ) {
 
-    when (val schedule = viewModel.schedule.collectAsState().value) {
+    SetTopAppBar {
+        TopAppBar(
+            title = { Text(text = stringResource(R.string.screen_title_schedule)) },
+            actions = {
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Search,
+                        contentDescription = null
+                    )
+                }
+            }
+        )
+    }
+
+    when (val schedule = viewModel.schedule.collectAsStateWithLifecycle().value) {
         is ScheduleViewModel.State.Idle, ScheduleViewModel.State.Loading -> {
             LoadingScreen()
         }
@@ -116,7 +139,7 @@ private fun ChannelSchedule(
         ) {
             itemsIndexed(
                 items = schedule,
-                key = { _, item -> item.lazyItemKey }
+                key = { _, item -> item.id }
             ) {index, item ->
                 ChannelScheduleItem(
                     item = item,
@@ -175,6 +198,3 @@ private fun ChannelScheduleItem(
     }
     
 }
-
-private val ScheduleItem.lazyItemKey: String
-    get() = "${channel.id}_${show.id}_${episode.id}_${airingDateTime}"
